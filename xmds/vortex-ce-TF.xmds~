@@ -1,0 +1,117 @@
+<simulation xmds-version="2">
+  <name>ce-vortice-TF</name>
+  <author>R. P. Teles</author>
+  <description>
+    Dynamics of 3D GPE containhg a single vortex at the center. The goals is get the collective oscilations.
+  </description>
+
+  <features>
+    <benchmark />
+    <arguments>
+      <argument name="mu"     type="real" default_value="20.74" />
+      <argument name="g"      type="real" default_value="800.0" />
+      <argument name="lamb"     type="real" default_value="0.9" />
+      <argument name="R"     type="real" default_value="6.4219" />
+      <argument name="Z"     type="real" default_value="7.10582" />
+      <argument name="X"     type="real" default_value="0.255784" />
+      <argument name="A"     type="real" default_value="0.0455999" />
+    </arguments>
+    <bing />
+    <fftw plan="patient" />
+  </features>
+
+
+  <geometry>
+    <propagation_dimension> t </propagation_dimension>
+    <transverse_dimensions>
+      <dimension name="r" lattice="128"  domain="(0, 30)" transform="bessel" order="1" />
+      <dimension name="z" lattice="256"  domain="(-30, 30)" />
+    </transverse_dimensions>
+  </geometry>
+
+  <driver name="distributed-mpi" />
+    
+  <vector name="init" type="real" dimensions="r z">
+    <components> DI </components>
+    <initialisation>
+      <![CDATA[
+       if ((1 - r*r/(R*R) - z*z/(Z*Z)) > 0) {
+          DI = A*sqrt(r*r/(r*r+X*X))*sqrt(1 - r*r/(R*R) - z*z/(Z*Z));
+          // This will be automatically normalised later
+        } else {
+          DI = 0.0;
+        }
+      ]]>
+     </initialisation>
+  </vector>
+
+
+  <vector name="main" initial_space="r z" type="complex">
+    <components> D </components>
+    <initialisation>
+      <dependencies>init</dependencies>
+      <![CDATA[
+       D = DI;
+      ]]>
+    </initialisation>
+  </vector>
+
+  
+  <computed_vector name="normalisation" dimensions="" type="real">
+    <components> Ncalc </components>
+    <evaluation>
+      <dependencies basis="r z">main</dependencies>
+      <![CDATA[
+        // Calculate the current normalisation of the wave function.
+        Ncalc = 2.0*M_PI*mod2(D);
+      ]]>
+    </evaluation>
+  </computed_vector>
+
+  <sequence>
+    
+    <integrate algorithm="ARK89" tolerance="1e-5" interval="1000.0" steps="100000">
+      <samples>4000 4000</samples>
+      <operators>
+        <operator kind="ex" constant="yes">
+          <operator_names>Lrr Lzz</operator_names>
+          <![CDATA[
+              Lrr = - kr*kr;
+              Lzz = - kz*kz;
+          ]]>
+        </operator>
+        <integration_vectors>main</integration_vectors>
+         <![CDATA[
+		dD_dt = i*(0.5*(Lrr[D] + Lzz[D]) - ((4.0*M_PI*g*mod2(D) + 0.5*(r*r + lamb*lamb*z*z) - mu)*D));
+        ]]>
+      </operators>
+    </integrate>
+  </sequence>
+
+  <output format="hdf5" filename="vortex-ce-TF.xsil">      
+      <sampling_group basis="r(0) z(0)" initial_sample="yes">
+        <moments>Dr</moments>
+        <dependencies>main</dependencies>
+        <![CDATA[
+            
+          Dr = 2.0*M_PI*r*r*mod2(D);
+            
+        ]]>
+      </sampling_group>
+    
+      <sampling_group basis="r(0) z(0)" initial_sample="yes">
+        <moments>Dz</moments>
+        <dependencies>main</dependencies>
+        <![CDATA[
+            
+          Dz = 2*M_PI*z*z*mod2(D);
+            
+        ]]>
+      </sampling_group>
+    
+   
+  </output>
+    
+  
+
+</simulation>

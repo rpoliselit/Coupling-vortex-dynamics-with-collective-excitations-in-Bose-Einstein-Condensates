@@ -1,0 +1,116 @@
+<simulation xmds-version="2">
+    <name>ce-vortice-p</name>
+    <author>R. P. Teles</author>
+    <description>
+        Ground state of 3D GPE containhg a central vortex.
+    </description>
+    
+    <features>
+        <benchmark />
+        <arguments>
+            <argument name="mu"     type="real" default_value="21.6" />
+            <argument name="g"      type="real" default_value="800.0" />
+            <argument name="lamb"     type="real" default_value="1.0" />
+        </arguments>
+        <bing />
+        <fftw plan="patient" />
+    </features>
+    
+    
+    <geometry>
+        <propagation_dimension> t </propagation_dimension>
+        <transverse_dimensions>
+            <dimension name="r" lattice="128"  domain="(0, 10)" transform="bessel" order="1" />
+            <dimension name="z" lattice="128"  domain="(-10, 10)" />
+        </transverse_dimensions>
+    </geometry>
+    
+    <driver name="distributed-mpi" />
+    
+    <vector name="init" type="real" dimensions="r z">
+        <components> DP </components>
+        <initialisation kind="hdf5">
+            <filename>
+                /Users/rafael/xmds/rza-oscilation/vortex-ce-i.h5
+            </filename>
+        </initialisation>
+    </vector>
+    
+    
+    <vector name="main" initial_space="r z" type="complex">
+        <components> D </components>
+        <initialisation>
+            <dependencies>init</dependencies>
+            <![CDATA[
+                D = DP;
+            ]]>
+        </initialisation>
+    </vector>
+    
+    
+    <computed_vector name="normalisation" dimensions="" type="real">
+        <components> Ncalc </components>
+        <evaluation>
+            <dependencies basis="r z">main</dependencies>
+            <![CDATA[
+                // Calculate the current normalisation of the wave function.
+                Ncalc = 2.0*M_PI*mod2(D);
+            ]]>
+        </evaluation>
+    </computed_vector>
+    
+    <sequence>
+        
+        <integrate algorithm="ARK45" tolerance="1e-5" interval="10.0" steps="100000">
+            <samples>100 100 100</samples>
+            <operators>
+                <operator kind="ex" constant="yes">
+                    <operator_names>Lrr Lzz</operator_names>
+                    <![CDATA[
+                        Lrr = - kr*kr;
+                        Lzz = - kz*kz;
+                    ]]>
+                </operator>
+                <integration_vectors>main</integration_vectors>
+                <![CDATA[
+                    dD_dt = i*(0.5*(Lrr[D] + Lzz[D]) - ((4.0*M_PI*g*mod2(D) + 0.5*(r*r + lamb*lamb*z*z) - mu)*D));
+                ]]>
+            </operators>
+        </integrate>
+    </sequence>
+    
+    <output format="hdf5" filename="vortex-ce-p.xsil">
+        <sampling_group basis="r(0) z(0)" initial_sample="yes">
+            <moments>Dr</moments>
+            <dependencies>main</dependencies>
+            <![CDATA[
+                
+                Dr = 2.0*M_PI*r*r*mod2(D);
+                
+            ]]>
+        </sampling_group>
+        
+        <sampling_group basis="r(0) z(0)" initial_sample="yes">
+            <moments>Dz</moments>
+            <dependencies>main</dependencies>
+            <![CDATA[
+                
+                Dz = 2*M_PI*z*z*mod2(D);
+                
+            ]]>
+        </sampling_group>
+        
+        <sampling_group basis="r(0) z(0)" initial_sample="yes">
+            <moments>Dn</moments>
+            <dependencies>main</dependencies>
+            <![CDATA[
+                
+                Dn = 2.0*M_PI*mod2(D);
+                
+            ]]>
+        </sampling_group>
+        
+    </output>
+    
+    
+</simulation>

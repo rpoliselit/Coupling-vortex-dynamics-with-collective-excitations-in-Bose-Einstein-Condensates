@@ -1,0 +1,192 @@
+<simulation xmds-version="2">
+  <name>ce-vortice-TF</name>
+  <author>R. P. Teles</author>
+  <description>
+    Ground state of 3D GPE containhg a central vortex.
+  </description>
+
+  <features>
+    <benchmark />
+    <arguments>
+      <argument name="mu"     type="real" default_value="20.74" />
+      <argument name="g"      type="real" default_value="800.0" />
+      <argument name="lamb"     type="real" default_value="0.9" />
+      <argument name="R"     type="real" default_value="6.4219" />
+      <argument name="Z"     type="real" default_value="7.10582" />
+      <argument name="X"     type="real" default_value="0.255784" />
+      <argument name="A"     type="real" default_value="0.0455999" />
+    </arguments>
+    <bing />
+    <fftw plan="patient" />
+  </features>
+
+
+  <geometry>
+    <propagation_dimension> t </propagation_dimension>
+    <transverse_dimensions>
+      <dimension name="r" lattice="128"  domain="(0, 15)" transform="bessel" order="1" />
+      <dimension name="z" lattice="128"  domain="(-15, 15)" />
+    </transverse_dimensions>
+  </geometry>
+
+  <driver name="distributed-mpi" />
+    
+  <vector name="init" type="real" dimensions="r z">
+    <components> DI </components>
+    <initialisation>
+      <![CDATA[
+       if ((1 - r*r/(R*R) - z*z/(Z*Z)) > 0) {
+          DI = A*sqrt(r*r/(r*r+X*X))*sqrt(1 - r*r/(R*R) - z*z/(Z*Z));
+          // This will be automatically normalised later
+        } else {
+          DI = 0.0;
+        }
+      ]]>
+     </initialisation>
+  </vector>
+
+
+  <vector name="main" initial_space="r z" type="complex">
+    <components> D </components>
+    <initialisation>
+      <dependencies>init</dependencies>
+      <![CDATA[
+       D = DI;
+      ]]>
+    </initialisation>
+  </vector>
+
+  
+  <computed_vector name="normalisation" dimensions="" type="real">
+    <components> Ncalc </components>
+    <evaluation>
+      <dependencies basis="r z">main</dependencies>
+      <![CDATA[
+        // Calculate the current normalisation of the wave function.
+        Ncalc = 2.0*M_PI*mod2(D);
+      ]]>
+    </evaluation>
+  </computed_vector>
+
+  <sequence>
+    
+    <integrate algorithm="ARK45" tolerance="1e-5" interval="100.0" steps="100000">
+      <samples>1000 1000 1000</samples>
+      <operators>
+        <operator kind="ex" constant="yes">
+          <operator_names>Lrr Lzz</operator_names>
+          <![CDATA[
+              Lrr = - kr*kr;
+              Lzz = - kz*kz;
+          ]]>
+        </operator>
+        <integration_vectors>main</integration_vectors>
+         <![CDATA[
+                dD_dt = i*(0.5*(Lrr[D] + Lzz[D]) - ((4.0*M_PI*g*mod2(D) + 0.5*(r*r + lamb*lamb*z*z) - mu)*D));
+        ]]>
+      </operators>
+    </integrate>
+  </sequence>
+
+  <output format="hdf5" filename="vortex-ce-TF.xsil">      
+      <sampling_group basis="r(0) z(0)" initial_sample="yes">
+        <moments>Dr</moments>
+        <dependencies>main</dependencies>
+        <![CDATA[
+            
+          Dr = 2.0*M_PI*r*r*mod2(D);
+            
+        ]]>
+      </sampling_group>
+    
+      <sampling_group basis="r(0) z(0)" initial_sample="yes">
+        <moments>Dz</moments>
+        <dependencies>main</dependencies>
+        <![CDATA[
+            
+          Dz = 2*M_PI*z*z*mod2(D);
+            
+        ]]>
+      </sampling_group>
+
+<sampling_group basis="r(0) z(0)" initial_sample="yes">
+        <moments>Dn</moments>
+        <dependencies>main</dependencies>
+        <![CDATA[
+            
+          Dn = 2*M_PI*mod2(D);
+            
+        ]]>
+      </sampling_group>
+    
+   
+  </output>
+    
+  
+
+
+<info>
+Script compiled with XMDS2 version 2.1.2 "Happy Mollusc" (r2791)
+See http://www.xmds.org for more information.
+
+Variables that can be specified on the command line:
+  Command line argument mu = 2.074000e+01
+  Command line argument g = 8.000000e+02
+  Command line argument lamb = 9.000000e-01
+  Command line argument R = 6.421900e+00
+  Command line argument Z = 7.105820e+00
+  Command line argument X = 2.557840e-01
+  Command line argument A = 4.559990e-02
+</info>
+
+<XSIL Name="moment_group_1">
+  <Param Name="n_independent">1</Param>
+  <Array Name="variables" Type="Text">
+    <Dim>2</Dim>
+    <Stream><Metalink Format="Text" Delimiter=" \n"/>
+t Dr 
+    </Stream>
+  </Array>
+  <Array Name="data" Type="double">
+    <Dim>1001</Dim>
+    <Dim>2</Dim>
+    <Stream><Metalink Format="HDF5" Type="Remote" Group="/1"/>
+vortex-ce-TF.h5
+    </Stream>
+  </Array>
+</XSIL>
+
+<XSIL Name="moment_group_2">
+  <Param Name="n_independent">1</Param>
+  <Array Name="variables" Type="Text">
+    <Dim>2</Dim>
+    <Stream><Metalink Format="Text" Delimiter=" \n"/>
+t Dz 
+    </Stream>
+  </Array>
+  <Array Name="data" Type="double">
+    <Dim>1001</Dim>
+    <Dim>2</Dim>
+    <Stream><Metalink Format="HDF5" Type="Remote" Group="/2"/>
+vortex-ce-TF.h5
+    </Stream>
+  </Array>
+</XSIL>
+
+<XSIL Name="moment_group_3">
+  <Param Name="n_independent">1</Param>
+  <Array Name="variables" Type="Text">
+    <Dim>2</Dim>
+    <Stream><Metalink Format="Text" Delimiter=" \n"/>
+t Dn 
+    </Stream>
+  </Array>
+  <Array Name="data" Type="double">
+    <Dim>1001</Dim>
+    <Dim>2</Dim>
+    <Stream><Metalink Format="HDF5" Type="Remote" Group="/3"/>
+vortex-ce-TF.h5
+    </Stream>
+  </Array>
+</XSIL>
+</simulation>

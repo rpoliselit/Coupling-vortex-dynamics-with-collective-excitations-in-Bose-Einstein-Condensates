@@ -1,0 +1,2932 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass revtex4
+\use_default_options true
+\maintain_unincluded_children false
+\language brazilian
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize a4paper
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\topmargin 2cm
+\rightmargin 2cm
+\bottommargin 2cm
+\headheight 1cm
+\footskip 1cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Dinâmica de um Vórtice num Perfil de Thomas-Fermi
+\end_layout
+
+\begin_layout Author
+Rafael Poliseli Teles
+\end_layout
+
+\begin_layout Abstract
+Aqui fizemos uma implementação e o estudo de fases apropriadas para uma
+ melhor descrição dos sistemas físicos com o uso do método variacional de
+ parâmetros variáveis.
+ Em geral, as fases do condensado deverão ser polinômios de grau igual ou
+ maior que dois.
+ E então, com uma nova fase apropriada foi possível calcular os modos coletivos
+ de um condensado contendo um vórtice ao longo do eixo axial (simetria cilíndric
+a), assim como a expansão livre deste.
+ Como resultado abrimos uma degenerescência em cada modo de oscilação já
+ conhecido, monopolo (breathing) e quadrupolo, estando a degenerescência
+ associada à oscilação do núcleo do vórtice em fase ou não com relação ao
+ raio axial.
+ Sempre há pelo menos um modo degenerado no sistema, quando excitado apresenta
+ um modo coletivo que é a soma dos dois modos de mesma energia.
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Introduzindo o Problema
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+indent}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Estamos interessados em observar a dinâmica de um condensado armadilhado
+ contendo um vórtice central do tipo linha, ou seja, queremos obter os modos
+ de oscilação coletiva deste sistema.
+ O interesse nesse problema está no fato de podemos medir estas oscilações
+ ao deslocarmos a nuvem atômica de seu equilíbrio, utilizando a ressonância
+ de Feshbach para modular o comprimento de espalhamento
+\begin_inset CommandInset citation
+LatexCommand cite
+key "cm1,c-ex1,perez2,rev1,rev3"
+
+\end_inset
+
+.
+ Essas oscilações também são usada em outros sistemas físicos como: duas
+ espécies condensadas
+\begin_inset CommandInset citation
+LatexCommand cite
+key "2-comp"
+
+\end_inset
+
+, BCS-BEC crossover
+\begin_inset CommandInset citation
+LatexCommand cite
+key "cm2,cm3,cm5"
+
+\end_inset
+
+ e Hélio superfluido
+\begin_inset CommandInset citation
+LatexCommand cite
+key "cm4"
+
+\end_inset
+
+.
+ Do ponto de vista teórico estamos interessados em saber como é dada a oscilação
+ do raio do vórtice com respeito aos modos coletivos em simetria cilíndrica
+ (modo quadrupolar e modo de breathing).
+ O modo quadrupolar é quando as componentes do condensado oscilam fora de
+ fase, sendo este o modo com menor freqüência de excitação.
+ Já o modo que demanda maior energia para ser excitado é o modo de breathing,
+ pois a alta densidade da nuvem atômica faz com que a mesma imponha uma
+ maior resistência para sair do equilíbrio
+\begin_inset CommandInset citation
+LatexCommand cite
+key "pethick,pit-str"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+A dinâmica dos modos normais de um vórtice foi estudada em modelos hidrodinâmica
+, os quais se focam no movimento do vórtice com relação ao centro de massa
+ do condensado
+\begin_inset CommandInset citation
+LatexCommand cite
+key "fetter1,vi2,sa-nomalmodes"
+
+\end_inset
+
+, sendo usado esse conceito no caso de duas componentes
+\begin_inset CommandInset citation
+LatexCommand cite
+key "2-compvor"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Cálculos preliminares utilizando um Ansatz Gaussiano com método variacional
+\begin_inset CommandInset citation
+LatexCommand cite
+key "perez1,perez2,2-compvor,2-comp"
+
+\end_inset
+
+, o qual não leva em conta o tamanho do vórtice, mostram um pequeno shift
+ nas freqüências (Figura 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig1"
+
+\end_inset
+
+), esse shift já foi obtidos via uma hidrodinâmica em 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "pit-str"
+
+\end_inset
+
+ e 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "normalmodes"
+
+\end_inset
+
+.
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+centering
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename shiftG.eps
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+As linhas superiores dizem respeito à freqüência do modo de breathing como
+ uma função da anisotropia do potencial harmônico (armadilha), enquanto
+ as linhas inferiores representam a freqüência do modo quadrupolar.
+ As linhas cheias (pretas) são para o caso de um TF sem vórtice, e as linhas
+ pontilhadas (azuis) são para o caso com vórtice na aproximação Gaussiana.
+ Essa aproximação se torna ruim acima de 
+\begin_inset Formula $ $
+\end_inset
+
+
+\begin_inset Formula $\lambda\approx1.5$
+\end_inset
+
+, pois, apesar de ser imperceptível no gráfico, a linha da Gaussiana para
+ o modo de breathing cruza a linha do TF.
+ Necessariamente, a presença do vórtice deve abaixar a freqüência do modo
+ de breathing, o que não concorda com a região de condensados oblatos, e
+ aumentar a freqüência do modo quadrupolar, o que está de acordo, sendo
+ esses os shifts das freqüências.
+ Note que 
+\begin_inset Formula $\varpi$
+\end_inset
+
+ está normalizado à freqüência da direção radial 
+\begin_inset Formula $\omega_{\rho}$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ Assim podemos esperar que a freqüência do monopolo (breathing) caia enquanto
+ a freqüência do quadrupolo aumente, na presença do vórtice.
+\end_layout
+
+\begin_layout Standard
+Para calcular isso de uma forma mais coerente com a realidade física, usamos
+ então um Ansatz Thomas-Fermi (TF)
+\begin_inset CommandInset citation
+LatexCommand cite
+key "vi1"
+
+\end_inset
+
+,
+\begin_inset Formula 
+\begin{equation}
+\psi\left(\rho,\varphi,z,t\right)=A\left(t\right)\left[\frac{\rho^{2}}{\rho^{2}+\xi\left(t\right)^{2}}\right]^{\frac{1}{2}}e^{i\varphi}\sqrt{1-\frac{\rho^{2}}{R_{\rho}\left(t\right)^{2}}-\frac{z^{2}}{R_{z}\left(t\right)^{2}}}\exp\left[iB_{\rho}\left(t\right)\frac{\rho^{2}}{2}+iB_{z}\left(t\right)\frac{z^{2}}{2}\right],\label{eq:TF-A}
+\end{equation}
+
+\end_inset
+
+e calculamos as equações de movimento para os parâmetros do condensado.
+ Continuando com os cálculos, linearizamos estas equações obtendo uma relação
+ de dispersão que resultou em freqüências negativas, as quais não faziam
+ sentido.
+ Portanto, tínhamos as equações linearizadas dadas por
+\begin_inset Formula 
+\begin{equation}
+M\ddot{\delta}+V\delta=0,
+\end{equation}
+
+\end_inset
+
+e sua relação de dispersão
+\begin_inset Formula 
+\begin{equation}
+\varpi^{2}=\det\left(M^{-1}V\right)=\det M^{-1}\det V=\frac{\det V}{\det M}.
+\end{equation}
+
+\end_inset
+
+Para que tenhamos freqüências positivas e com significado físico, ambos
+ determinantes acima devem, necessariamente, ser positivos.
+ O que, no caso, não estava acontecendo.
+ Aqui temos que 
+\begin_inset Formula $\det M^{-1}<0$
+\end_inset
+
+, o que indica que há um problema com nosso Ansatz.
+ Como nos trabalhos já existente
+\begin_inset CommandInset citation
+LatexCommand cite
+key "2-compvor,michele,sa-nomalmodes"
+
+\end_inset
+
+ eles não consideram a variação do núcleo do vórtice como um parâmetro variacion
+al, esse problema não aparece.
+ Para reverter este problema temos de alterar a fase deste Ansatz, então
+ escolheremos uma fase adequada posteriormente à um estudo da fase, o qual
+ se encontra na próxima seção.
+\end_layout
+
+\begin_layout Section
+Engenharia de Fase
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+indent}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Para avaliarmos possíveis fase e, posteriormente, construímos nossa função
+ de onde, utilizaremos a equação da continuidade,
+\begin_inset Formula 
+\begin{align}
+\frac{\partial n}{\partial t}+\nabla\cdot\left(n\mathbf{v}\right) & =0\\
+\frac{\partial n}{\partial t}+\frac{\hbar}{m}\left[\left(\nabla n\right)\left(\nabla S\right)+n\nabla^{2}S\right] & =0.
+\end{align}
+
+\end_inset
+
+Desta maneira ao jogamos na equação acima a densidade referente ao nosso
+ condensado podemos calcular a fazer do mesmo.
+ Fazendo, primeiramente, o cálculo da fase para um condensado TF deslocado
+ do centro de massa, o qual tem uma densidade da seguinte forma
+\begin_inset Formula 
+\begin{equation}
+n(r,t)=A(t)\left\{ 1-\left[\frac{r-r_{0}(t)}{R(t)}\right]^{2}\right\} ,
+\end{equation}
+
+\end_inset
+
+onde 
+\begin_inset Formula $r_{0}$
+\end_inset
+
+ é a distância do centro do potencial de aprisionamento.
+ Obtemos uma equação para a fase dada por
+\begin_inset Formula 
+\begin{align}
+\left(\frac{r-r_{0}}{R}\right)^{2}\left[\frac{m}{\hbar}\frac{\dot{R}}{R}+\left(r-r_{0}\right)^{-1}\left(\frac{m}{\hbar}\dot{r_{0}}-\frac{\partial S}{\partial r}\right)\right]\nonumber \\
++\frac{1}{2}\left[1-\left(\frac{r-r_{0}}{R}\right)^{2}\right]\left(\frac{m}{\hbar}\frac{\dot{A}}{A}+\frac{\partial^{2}S}{\partial r^{2}}+\frac{1}{r}\frac{\partial S}{\partial r}\right) & =0.
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Uma vez que estamos interessados numa fase que descreve o comportamento
+ na borda do condensado, já que o gradiente no centro não terá variações
+ significativas.
+ Então podemos simplificar a equação acima para quando estamos exatamente
+ em cima do raio do condensado, ou seja, 
+\begin_inset Formula $1-\left(r-r_{0}\right)^{2}/R^{2}=0$
+\end_inset
+
+.
+\begin_inset Formula 
+\begin{align}
+\frac{\partial S}{\partial r}= & \frac{m}{\hbar}\frac{\dot{R}}{R}\left(r-r_{0}\right)+\frac{m}{\hbar}\dot{r_{0}}\\
+S\left(r\right)= & \frac{m}{\hbar}\left(\dot{r_{0}}-r_{0}\frac{\dot{R}}{R}\right)r+\frac{m}{\hbar}\frac{\dot{R}}{R}\frac{r^{2}}{2}\\
+= & \left(\frac{m}{\hbar}\dot{r_{0}}-r_{0}B_{r}\right)r+B_{r}\frac{r^{2}}{2}
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Assim recuperamos as fases usadas em 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "perez1"
+
+\end_inset
+
+, onde podemos ver que o raio do condensado tem sua velocidade proporcional
+ ao quadrado da respectiva coordenada.
+ Sendo a posição 
+\begin_inset Formula $r_{0}$
+\end_inset
+
+ proporcional à respectiva coordenada, sabemos que o movimento do centro
+ de massa está desacoplado com a dinâmica dos raios do condensado.
+ Dessa forma, a fase de um condensado deve ter 
+\begin_inset Formula $b(t)r^{2}/2$
+\end_inset
+
+ para descrever a velocidade (curvatura da função de onda) dos raios do
+ mesmo.
+ Já um termo 
+\begin_inset Formula $a(t)r$
+\end_inset
+
+ que descreve o movimento do centro de massa (inclinação da função de onda).
+\end_layout
+
+\begin_layout Standard
+Agora faremos o mesmo cálculo para um densidade TF contendo um vórtice central
+ ao longo do eixo z,
+\begin_inset Formula 
+\begin{equation}
+n\left(\rho,\varphi,z,t\right)=A(t)e^{i\ell\varphi}\left\{ 1-\left[\frac{\xi(t)}{\rho}\right]^{2}-\left[\frac{\rho}{R_{\rho}(t)}\right]^{2}-\left[\frac{z}{R_{z}(t)}\right]^{2}\right\} ,
+\end{equation}
+
+\end_inset
+
+cuja equação de continuidade fica sendo
+\begin_inset Formula 
+\begin{align}
+\frac{m}{\hbar}\left(-\frac{\xi\dot{\xi}}{\rho^{2}}+\frac{\dot{R_{\rho}}}{R_{\rho}^{3}}\rho^{2}+\frac{\dot{R_{z}}}{R_{z}^{3}}z^{2}\right)+\left(\frac{\xi^{2}}{\rho^{3}}-\frac{\rho}{R_{\rho}^{2}}\right)\frac{\partial S}{\partial\rho}-\frac{z}{R_{z}^{2}}\frac{\partial S}{\partial z}\nonumber \\
++\frac{1}{2}\left(1-\frac{\xi^{2}}{\rho^{2}}-\frac{\rho^{2}}{R_{\rho}^{2}}-\frac{z^{2}}{R_{z}^{2}}\right)\left(\frac{m}{\hbar}\frac{\dot{A}}{A}+\frac{\partial^{2}S}{\partial\rho^{2}}+\frac{\partial^{2}S}{\partial z^{2}}+\frac{1}{\rho}\frac{\partial S}{\partial\rho}\right) & =0.
+\end{align}
+
+\end_inset
+
+Usando a mesma argumentação anterior para este caso, 
+\begin_inset Formula $1-\frac{\xi^{2}}{\rho^{2}}-\frac{\rho^{2}}{R_{\rho}^{2}}-\frac{z^{2}}{R_{z}^{2}}=0$
+\end_inset
+
+ (no caso de estamos tratando do limite do gás ideal, a densidade será uma
+ gaussiana e os limites de borda são 
+\begin_inset Formula $\rho\rightarrow0$
+\end_inset
+
+ e 
+\begin_inset Formula $\rho\rightarrow\infty$
+\end_inset
+
+).
+\begin_inset Formula 
+\begin{equation}
+\left(-\frac{\xi^{2}}{\rho^{3}}+\frac{\rho}{R_{\rho}^{2}}\right)\frac{\partial S}{\partial\rho}+\frac{z}{R_{z}^{2}}\frac{\partial S}{\partial z}-\frac{m}{\hbar}\left(-\frac{\xi\dot{\xi}}{\rho^{2}}+\frac{\dot{R_{\rho}}}{R_{\rho}^{3}}\rho^{2}+\frac{\dot{R_{z}}}{R_{z}^{3}}z^{2}\right)=0
+\end{equation}
+
+\end_inset
+
+Resolvendo a equação acima temos
+\begin_inset Formula 
+\begin{align}
+S\left(\rho,z\right)= & \frac{m}{4\hbar}\left(\xi\dot{R_{\rho}}-R_{\rho}\dot{\xi}\right)\left[\ln\left(\frac{R_{\rho}\xi-\rho^{2}}{R_{\rho}\xi+\rho^{2}}\right)+\ln\left(-1\right)\right]+\frac{m}{\hbar}\frac{\dot{R_{\rho}}}{R_{\rho}}\frac{\rho^{2}}{2}+\frac{m}{\hbar}\frac{\dot{R_{z}}}{R_{z}}\frac{z^{2}}{2}\\
+= & \frac{m}{4\hbar}\left(\xi\dot{R_{\rho}}-R_{\rho}\dot{\xi}\right)\left[\ln\left(\frac{R_{\rho}\xi-\rho^{2}}{R_{\rho}\xi+\rho^{2}}\right)+i\pi\right]+B_{\rho}\frac{\rho^{2}}{2}+B_{z}\frac{z^{2}}{2}.\label{eq:fase 3}\\
+S\left(\rho,z\right)\simeq & \frac{m}{2\hbar}\left(\xi\dot{R_{\rho}}-R_{\rho}\dot{\xi}\right)\left[i\pi-\frac{R\xi}{\rho^{2}}+O\left(\xi^{3}\right)\right]+B_{\rho}\frac{\rho^{2}}{2}+B_{z}\frac{z^{2}}{2}\label{eq:fase}\\
+S\left(\rho,z\right)\simeq & \frac{m}{2\hbar}\left(\xi\dot{R_{\rho}}-R_{\rho}\dot{\xi}\right)\left[\frac{i\pi}{2}-\frac{\rho^{2}}{R\xi}+O\left(R^{-3}\right)\right]+B_{\rho}\frac{\rho^{2}}{2}+B_{z}\frac{z^{2}}{2}
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+centering
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename faseVr.eps
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Esboço de 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:fase"
+
+\end_inset
+
+ na direção radial.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig2"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Ao usar uma fase proporcional à 
+\begin_inset Formula $\rho^{-2}$
+\end_inset
+
+ (Figura 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig2"
+
+\end_inset
+
+), temos um bom resultado caso estivermos tratando de um condensado em duas
+ dimensões.
+ Como estamos querendo uma descrição tridimensional do problema em questão,
+ esta fase trás problemas de convergência no cálculo da Lagrangiana.
+ Com uma fase do tipo 
+\begin_inset Formula $C(t)\rho^{-1}$
+\end_inset
+
+, aparecerá termos imaginários na Lagrangiana o que acarretará em termos
+ imaginários, também, nas equações de movimento, e não queremos isso.
+ A fase 
+\begin_inset Formula $C(t)\ln\rho$
+\end_inset
+
+ não é simples de se usar com um TF-Ansatz, sua complicação está na parte
+ temporal da Lagrangiana, 
+\begin_inset Formula 
+\begin{equation}
+L_{temp}=\frac{i\hbar}{2}\int d^{3}r\left[\psi^{*}\left(\mathbf{r},t\right)\frac{\partial\psi\left(\mathbf{r},t\right)}{\partial t}+c.c.\right].
+\end{equation}
+
+\end_inset
+
+Portanto, a fase terá de ser um polinômio de quarto grau, 
+\begin_inset Formula 
+\begin{equation}
+S(\rho,z,t)=B_{\rho}(t)\frac{\rho^{2}}{2}+C(t)\frac{\rho^{4}}{4}+B_{z}(t)\frac{z^{2}}{2},\label{eq:fase 2}
+\end{equation}
+
+\end_inset
+
+podendo assim descrever aproximadamente a parte radial de 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:fase 3"
+
+\end_inset
+
+.
+ Isso quer dizer que o problema em 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:TF-A"
+
+\end_inset
+
+ é decorrente do número de parâmetros usados na densidade e na fase, os
+ quais eram diferentes.
+ Como a corrente está ligada à variação de densidade é preciso que ambos,
+ densidade e fase, tenham o mesmo número de parâmetros.
+ Assim temos parâmetros suficientes para que descreva as flutuações na densidade.
+\end_layout
+
+\begin_layout Section
+Calculando a Lagrangiana
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+indent}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Após esse estudo de fases, calcularemos a Lagrangiana do sistema usando
+ uma fase polinomial com o número de parâmetros variacionais apropriados
+ em nosso Ansatz, o qual fica da seguinte forma:
+\begin_inset Formula 
+\begin{align}
+\psi\left(\mathbf{r},t\right)= & \sqrt{\frac{N}{\pi R_{\rho}(t)^{2}R_{z}(t)A_{0}(t)}}\left[\frac{\rho^{2}}{\rho^{2}+\xi\left(t\right)^{2}}\right]^{\frac{1}{2}}e^{i\ell\varphi}\sqrt{1-\frac{\rho^{2}}{R_{\rho}\left(t\right)^{2}}-\frac{z^{2}}{R_{z}\left(t\right)^{2}}}\nonumber \\
+ & \times\exp\left[iB_{\rho}\left(t\right)\frac{\rho^{2}}{2}+iC(t)\frac{\rho^{4}}{4}+iB_{z}\left(t\right)\frac{z^{2}}{2}\right],
+\end{align}
+
+\end_inset
+
+onde 
+\begin_inset Formula $A_{0}$
+\end_inset
+
+
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Todas as funções de 
+\begin_inset Formula $A_{i}$
+\end_inset
+
+ de 
+\begin_inset Formula $\alpha(t)$
+\end_inset
+
+ estão calculadas no Apêndice B.
+\end_layout
+
+\end_inset
+
+, que é determinada pela condição de normalização 
+\begin_inset Formula 
+\begin{equation}
+N=\int\psi\left(\mathbf{r},t\right)d\mathbf{r},
+\end{equation}
+
+\end_inset
+
+é uma função de 
+\begin_inset Formula $\alpha(t)\equiv\xi(t)/R_{\rho}(t)$
+\end_inset
+
+, sendo 
+\begin_inset Formula $\xi(t)$
+\end_inset
+
+ o raio do vórtice, 
+\begin_inset Formula $R_{\rho}(t)$
+\end_inset
+
+ o raio do condensado na direção de 
+\begin_inset Formula $\hat{\rho}$
+\end_inset
+
+ e 
+\begin_inset Formula $R_{z}(t)$
+\end_inset
+
+ o raio do condensado na direção axial (
+\begin_inset Formula $\hat{z}$
+\end_inset
+
+).
+ Essa função de onde tem os limites de integração determinados por 
+\begin_inset Formula $1-\frac{\rho^{2}}{R_{\rho}^{2}}-\frac{z^{2}}{R_{z}^{2}}\geq0$
+\end_inset
+
+, ou seja, esta função de onda é aproximadamente uma parábola invertida,
+ desconsiderando o vórtice central, cuja sua extensão na região dos valores
+ negativos é nula.
+ Estamos tratando de um condensado com uma densidade dada por uma parábola
+ invertida, o que significa que temos um potencial harmônico em coordenadas
+ cilíndricas descrito por 
+\begin_inset Formula $V\left(\rho,z\right)=\frac{1}{2}m\omega_{\rho}^{2}\left(\rho^{2}+\lambda^{2}z^{2}\right)$
+\end_inset
+
+, com uma anisotropia dada por 
+\begin_inset Formula $\lambda=\omega_{z}/\omega_{\rho}$
+\end_inset
+
+, ou seja, para cada valor de 
+\begin_inset Formula $\lambda$
+\end_inset
+
+ temos um formato diferente de armadilha magneto-ótica (MOT).
+ Para 
+\begin_inset Formula $\lambda$
+\end_inset
+
+ igual à unidade, o potencial harmônico será isotrópico.
+ Já para valores de 
+\begin_inset Formula $\lambda<1$
+\end_inset
+
+ teremos um potencial com formato prolato, alongado em 
+\begin_inset Formula $\hat{z}$
+\end_inset
+
+; em 
+\begin_inset Formula $\lambda>1$
+\end_inset
+
+ sua forma será uma oblato, achatado em 
+\begin_inset Formula $\hat{z}$
+\end_inset
+
+.
+ O formato do potencial, obviamente, define o formato do condensado.
+ Lembrando, quando definimos um valor de 
+\begin_inset Formula $\lambda$
+\end_inset
+
+, necessariamente maior que zero, é como se estivéssemos preparando nosso
+ condensado regulando o nosso valor de 
+\begin_inset Formula $\omega_{z}$
+\end_inset
+
+ e mantendo constante o 
+\begin_inset Formula $\omega_{\rho}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+A interação atômica será 
+\begin_inset Formula $V_{int}=g\left|\psi\left(\mathbf{r},t\right)\right|^{2}$
+\end_inset
+
+ (Figura 3), cujo significado físico é o de espalhamento de onda-s, isto
+ é, espalhamento de baixa energia.
+ Por conta disso, o parâmetro de interação é proporcional ao comprimento
+ de espalhamento 
+\begin_inset Formula $a_{s}$
+\end_inset
+
+, o que é 
+\begin_inset Formula $g=\frac{4\pi\hbar^{2}a_{s}}{m}$
+\end_inset
+
+.
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+centering
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename Feynman.eps
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Diagrama de Feynman da interação atômica dos condensados.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig3"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A densidade de Lagrangiana,
+\begin_inset Formula 
+\begin{equation}
+\mathcal{L}=\mathcal{L}_{temp}+\mathcal{L}_{cin}+\mathcal{L}_{pot}+\mathcal{L}_{int},
+\end{equation}
+
+\end_inset
+
+ tem quatro componentes: temporal, cinética, potencial, e potencial de interação.
+ Da mesma forma poderemos dividir nossa Lagrangiana,
+\begin_inset Formula 
+\begin{equation}
+L=\int\mathcal{L}d\mathbf{r}.
+\end{equation}
+
+\end_inset
+
+Seguindo esse caminho, então vamos calcular todas as partes da Lagrangiana
+ agora.
+\end_layout
+
+\begin_layout Standard
+Parte temporal:
+\begin_inset Formula 
+\begin{align}
+\mathcal{L}_{temp}= & \frac{i\hbar}{2}\left[\psi^{*}\left(\mathbf{r},t\right)\frac{\partial\psi\left(\mathbf{r},t\right)}{\partial t}-\psi\left(\mathbf{r},t\right)\frac{\partial\psi^{*}\left(\mathbf{r},t\right)}{\partial t}\right]\nonumber \\
+L_{temp}= & -\frac{N\hbar}{2}\left(D_{1}\dot{B_{\rho}}R_{\rho}^{2}+D_{2}\dot{B_{z}}R_{z}^{2}+\frac{1}{2}D_{3}\dot{C}R_{\rho}^{4}\right).
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Parte cinética:
+\begin_inset Formula 
+\begin{align}
+\mathcal{L}_{cin}= & -\frac{\hbar^{2}}{2m}\left[\nabla\psi^{*}\left(\mathbf{r},t\right)\right]\left[\nabla\psi\left(\mathbf{r},t\right)\right]\nonumber \\
+L_{cin}= & -\frac{N\hbar^{2}}{2m}\left[D_{1}B_{\rho}^{2}R_{\rho}^{2}+D_{2}B_{z}^{2}R_{z}^{2}+2D_{3}B_{\rho}CR_{\rho}^{4}+R_{\rho}^{-2}\left(\ell^{2}D_{4}+D_{5}\right)+D_{6}C^{2}R_{\rho}^{6}\right].
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Parte potencial (armadilha harmônica):
+\begin_inset Formula 
+\begin{align}
+\mathcal{L}_{pot}= & -\frac{1}{2}m\omega_{\rho}^{2}\left(\rho^{2}+\lambda^{2}z^{2}\right)\psi^{*}\left(\mathbf{r},t\right)\psi\left(\mathbf{r},t\right)\nonumber \\
+L_{pot}= & -\frac{N}{2}m\omega_{\rho}^{2}\left(D_{1}R_{\rho}^{2}+\lambda^{2}D_{2}R_{z}^{2}\right).
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Parte do potencial de interação atômica:
+\begin_inset Formula 
+\begin{align}
+\mathcal{L}_{int}= & -\frac{g}{2}\left[\psi^{*}\left(\mathbf{r},t\right)\psi\left(\mathbf{r},t\right)\right]^{2}\nonumber \\
+L_{int}= & -\frac{N^{2}gD_{7}}{2\pi R_{\rho}^{2}R_{z}}.
+\end{align}
+
+\end_inset
+
+As funções de 
+\begin_inset Formula $\alpha$
+\end_inset
+
+, 
+\begin_inset Formula $D_{i}$
+\end_inset
+
+, são: 
+\begin_inset Formula $D_{i}=A_{i}/A_{0}$
+\end_inset
+
+, com exceção de 
+\begin_inset Formula $D_{7}=A_{7}/A_{0}^{2}$
+\end_inset
+
+.
+ Assim nossa Lagrangiana será a soma de cada contribuição, 
+\begin_inset Formula $L=L_{temp}+L_{cin}+L_{pot}+L_{int}$
+\end_inset
+
+.
+ Por questões de simplicidade, podemos escalar a Lagrangiana para que os
+ parâmetros fiquem adimensionais, que seria as seguintes mudanças:
+\begin_inset Formula 
+\begin{align*}
+R_{\rho}(t)\rightarrow & a_{osc}r_{\rho}(t),\\
+R_{z}(t)\rightarrow & a_{osc}r_{z}(t),\\
+\xi(t)\rightarrow & a_{osc}r_{\xi}(t),\\
+B_{\rho}(t)\rightarrow & a_{osc}^{-2}\beta_{\rho}(t),\\
+B_{z}(t)\rightarrow & a_{osc}^{-2}\beta_{z}(t),\\
+C(t)\rightarrow & a_{osc}^{-4}\zeta(t)
+\end{align*}
+
+\end_inset
+
+e
+\begin_inset Formula 
+\[
+t\rightarrow\omega_{\rho}^{-1}\tau;
+\]
+
+\end_inset
+
+com o comprimento do oscilador harmônico 
+\begin_inset Formula $a_{osc}=\sqrt{\hbar/m\omega_{\rho}}$
+\end_inset
+
+ e o parâmetro adimensional de interação será 
+\begin_inset Formula $\gamma=Na_{s}/a_{osc}$
+\end_inset
+
+.
+ Assim nossa Lagrangiana ficará sendo
+\begin_inset Formula 
+\begin{align}
+L= & -N\hbar\omega_{\rho}\left[D_{1}r_{\rho}^{2}\left(\dot{\beta_{\rho}}+\beta_{\rho}^{2}+1\right)+D_{2}r_{z}^{2}\left(\dot{\beta_{z}}+\beta_{z}^{2}+\lambda^{2}\right)\right.\nonumber \\
+ & \left.+D_{3}r_{\rho}^{4}\left(\frac{1}{2}\dot{\zeta}+2\beta_{\rho}\zeta\right)+r_{\rho}^{-2}\left(\ell^{2}D_{4}+D_{5}\right)+D_{6}\zeta^{2}r_{\rho}^{6}+\frac{4D_{7}\gamma}{r_{\rho}^{2}r_{z}}\right].
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Equações de Movimento
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+indent}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Tomando as equações de Euler-Lagrange,
+\begin_inset Formula 
+\begin{align}
+\frac{d}{dt}\left(\frac{\partial L}{\partial\dot{q_{i}}}\right)-\frac{\partial L}{\partial q_{i}}= & 0,
+\end{align}
+
+\end_inset
+
+para cada um dos seis parâmetros variacionais, ficando então seis equações
+ diferenciais:
+\begin_inset Formula 
+\begin{align}
+\beta_{\rho}-\frac{\dot{r_{\rho}}}{r_{\rho}}-\frac{D_{1}^{\prime}\dot{\alpha}}{2D_{1}}+\frac{D_{3}r_{\rho}^{2}\zeta}{D_{1}} & =0\label{eq:1a}\\
+\beta_{z}-\frac{\dot{r_{z}}}{r_{z}}-\frac{D_{2}^{\prime}\dot{\alpha}}{2D_{2}} & =0\label{eq:1b}\\
+\zeta-\frac{D_{3}\dot{r_{\rho}}}{D_{6}r_{\rho}}-\frac{D_{3}\dot{\alpha}}{4D_{6}r_{\rho}^{2}}+\frac{D_{3}\beta_{\rho}}{D_{6}r_{\rho}^{2}} & =0\label{eq:1c}\\
+D_{1}r_{\rho}\left(\dot{\beta_{\rho}}+\beta_{\rho}^{2}+1\right)+D_{3}r_{\rho}^{3}\left(\dot{\zeta}+4\beta_{\rho}\zeta\right)-\nonumber \\
+r_{\rho}^{-3}\left(\ell^{2}D_{4}+D_{5}\right)+3D_{6}\zeta^{2}r_{\rho}^{5}-\frac{4D_{7}\gamma}{r_{\rho}^{3}r_{z}} & =0\label{eq:1d}\\
+D_{2}r_{z}\left(\dot{\beta_{z}}+\beta_{z}^{2}+\lambda^{2}\right)-\frac{2D_{67}\gamma}{r_{\rho}^{2}r_{z}^{2}} & =0\label{eq:1e}\\
+D_{1}^{\prime}r_{\rho}^{2}\left(\dot{\beta_{\rho}}+\beta_{\rho}^{2}+1\right)+D_{2}^{\prime}r_{z}^{2}\left(\dot{\beta_{z}}+\beta_{z}^{2}+\lambda^{2}\right)+D_{3}^{\prime}r_{\rho}^{4}\left(\frac{1}{2}\dot{\zeta}+2\beta_{\rho}\zeta\right)+\nonumber \\
+r_{\rho}^{-2}\left(\ell^{2}D_{4}^{\prime}+D_{5}^{\prime}\right)+D_{6}^{\prime}\zeta^{2}r_{\rho}^{6}-\frac{4D_{7}^{\prime}\gamma}{r_{\rho}^{2}r_{z}} & =0.\label{eq:1f}
+\end{align}
+
+\end_inset
+
+ Resolvendo as equações para os parâmetros advindos das fases, os quais
+ estão relacionados à variação da curvatura da função de onda, teremos:
+\begin_inset Formula 
+\begin{align}
+\beta_{\rho}= & \frac{\dot{r_{\rho}}}{r_{\rho}}+F_{1}\dot{\alpha},\label{eq:2a}\\
+\beta_{z}= & \frac{\dot{r_{z}}}{r_{z}}+F_{2}\dot{\alpha}\label{eq:2b}
+\end{align}
+
+\end_inset
+
+e
+\begin_inset Formula 
+\begin{align}
+\zeta= & F_{3}\frac{\dot{\alpha}}{r_{\rho}^{2}};\label{eq:2c}
+\end{align}
+
+\end_inset
+
+onde
+\begin_inset Formula 
+\begin{align}
+F_{1}= & \frac{D_{3}^{\prime}D_{3}-2D_{1}^{\prime}D_{6}}{4\left(D_{3}^{2}-D_{1}D_{6}\right)},\\
+F_{2}= & \frac{D_{2}^{\prime}}{2D_{2}}
+\end{align}
+
+\end_inset
+
+e
+\begin_inset Formula 
+\begin{equation}
+F_{3}=\frac{2D_{1}^{\prime}D_{3}-D_{1}D_{3}^{\prime}}{4\left(D_{3}^{2}-D_{1}D_{6}\right)}.
+\end{equation}
+
+\end_inset
+
+Substituindo 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:2a"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:2b"
+
+\end_inset
+
+ e 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:2c"
+
+\end_inset
+
+ nas equações 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:1d"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:1e"
+
+\end_inset
+
+ e 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:1f"
+
+\end_inset
+
+, reduzimos nossas seis equações acopladas em três equações, igualmente
+ acopladas, as quais são:
+\begin_inset Formula 
+\begin{align}
+D_{1}\left(\ddot{r_{\rho}}+r_{\rho}\right)+G_{1}r_{\rho}\ddot{\alpha}+G_{2}r_{\rho}\dot{\alpha}^{2}+G_{3}\dot{r_{\rho}}\dot{\alpha}-\frac{G_{4}}{r_{\rho}^{3}}-\frac{4D_{7}\gamma}{r_{\rho}^{3}r_{z}} & =0\label{eq:2d}\\
+D_{2}\left(\ddot{r_{z}}+\lambda^{2}r_{z}\right)+G_{5}r_{z}\ddot{\alpha}+G_{6}r_{z}\dot{\alpha}^{2}+G_{7}\dot{r_{z}}\dot{\alpha}-\frac{2D_{6}\gamma}{r_{\rho}^{2}r_{z}^{2}} & =0\label{eq:2e}\\
+D_{1}^{\prime}r_{\rho}\left(\ddot{r_{\rho}}+r_{\rho}\right)+D_{2}^{\prime}r_{z}\left(\ddot{r_{z}}+\lambda^{2}r_{z}\right)+\left(G_{8}r_{\rho}^{2}+G_{9}r_{z}^{2}\right)\ddot{\alpha}+\left(G_{10}r_{\rho}^{2}+G_{11}r_{z}^{2}\right)\dot{\alpha}^{2}\nonumber \\
++\left(G_{12}r_{\rho}\dot{r_{\rho}}+G_{13}r_{z}\dot{r_{z}}\right)\dot{\alpha}+\frac{G_{14}}{r_{\rho}^{2}}+\frac{4D_{6}^{\prime}\gamma}{r_{\rho}^{2}r_{z}} & =0,\label{eq:2f}
+\end{align}
+
+\end_inset
+
+com
+\begin_inset Formula 
+\begin{align}
+G_{1}= & D_{1}F_{1}+D_{3}F_{3}\\
+G_{2}= & D_{1}\left(F_{1}^{2}+F_{1}^{\prime}\right)+D_{3}\left(4F_{1}F_{3}+F_{3}^{\prime}\right)+3D_{6}F_{3}^{2}\\
+G_{3}= & 2\left(D_{1}F_{1}+D_{3}F_{3}\right)=2G_{1}\\
+G_{4}= & \ell^{2}D_{4}+D_{5}\\
+G_{5}= & D_{2}F_{2}\\
+G_{6}= & D_{2}\left(F_{2}^{2}+F_{2}^{\prime}\right)\\
+G_{7}= & 2D_{2}F_{2}=2G_{5}\\
+G_{8}= & D_{1}^{\prime}F_{1}+\frac{1}{2}D_{3}^{\prime}F_{3}\\
+G_{9}= & D_{2}^{\prime}F_{2}\\
+G_{10}= & D_{1}^{\prime}\left(F_{1}^{2}+F_{1}^{\prime}\right)+D_{3}^{\prime}\left(\frac{1}{2}F_{3}^{\prime}+2F_{1}F_{3}\right)+D_{6}^{\prime}F_{3}^{2}\\
+G_{11}= & D_{2}^{\prime}\left(F_{2}^{2}+F_{2}^{\prime}\right)\\
+G_{12}= & 2D_{1}^{\prime}F_{1}+D_{3}^{\prime}F_{3}\\
+G_{13}= & 2D_{2}^{\prime}F_{2}=2G_{9}\\
+G_{14}= & \ell^{2}D_{4}^{\prime}+D_{5}^{\prime}.
+\end{align}
+
+\end_inset
+
+Os termos 
+\begin_inset Formula $D_{1}r_{\rho}$
+\end_inset
+
+, 
+\begin_inset Formula $D_{2}\lambda^{2}r_{z}$
+\end_inset
+
+, 
+\begin_inset Formula $D_{1}^{\prime}r_{\rho}^{2}$
+\end_inset
+
+ e 
+\begin_inset Formula $D_{2}^{\prime}r_{z}^{2}$
+\end_inset
+
+ são os responsáveis pelo aprisionamento do condensado, os quais se forem
+ jogados fora resulta nas equações para a expansão livre.
+ Os termos proporcionais ao parâmetro 
+\begin_inset Formula $\gamma$
+\end_inset
+
+ dá a contribuição do potencial de interação atômica, enquanto os termos
+ proporcionais à 
+\begin_inset Formula $r_{\rho}^{-2}$
+\end_inset
+
+ e 
+\begin_inset Formula $r_{\rho}^{-3}$
+\end_inset
+
+ são resultado da contribuição cinética do vórtice, cujo efeito foi adicionar
+ uma pressão quântica.
+ Já os demais termos representa o efeito de acoplamento entre os raios do
+ condensado e o raio do vórtice.
+\end_layout
+
+\begin_layout Standard
+Fazendo as velocidades (
+\begin_inset Formula $\dot{r_{\rho}}$
+\end_inset
+
+, 
+\begin_inset Formula $\dot{r_{z}}$
+\end_inset
+
+ e 
+\begin_inset Formula $\dot{\alpha}$
+\end_inset
+
+) e acelerações (
+\begin_inset Formula $\ddot{r_{\rho}}$
+\end_inset
+
+, 
+\begin_inset Formula $\ddot{r_{z}}$
+\end_inset
+
+ e 
+\begin_inset Formula $\ddot{\alpha}$
+\end_inset
+
+) iguais à zero então temos as equações para a solução estacionária.
+\begin_inset Formula 
+\begin{align}
+D_{1}\rho_{0} & =\frac{G_{4}}{\rho_{0}^{3}}+\frac{4D_{7}\gamma}{\rho_{0}^{3}z_{0}}\label{eq:ss1}\\
+D_{2}\lambda^{2}z_{0} & =\frac{2D_{7}\gamma}{\rho_{0}^{2}z_{0}^{2}}\label{eq:ss2}\\
+D_{1}^{\prime}\rho_{0}^{2}+D_{2}^{\prime}\lambda^{2}z_{0}^{2} & =-\frac{G_{14}}{\rho_{0}^{3}}-\frac{4D_{7}^{\prime}\gamma}{\rho_{0}^{2}z_{0}}\label{eq:ss3}
+\end{align}
+
+\end_inset
+
+Lembrando que agora as funções de 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ se tornam funções de 
+\begin_inset Formula $\alpha_{0}$
+\end_inset
+
+.
+ Para resolver as equações acima, é preciso utilizar métodos numéricos,
+ no caso o método de Newton.
+ O parâmetro de interação que será usado é 
+\begin_inset Formula $\gamma=800$
+\end_inset
+
+, o qual está bem próximo ao valor do experimento com Rb
+\begin_inset CommandInset citation
+LatexCommand cite
+key "emanuel"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Modos Coletivos e Estabilidade dos Vórtices
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+indent}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A introdução do vórtice no sistema quebra uma simetria na fase, o que leva
+ abrir uma degenerescência nos modos coletivos do condensado.
+ Assim esperamos encontrar dois modos equivalentes ao monopolo (breathing),
+ e outros dois equivalentes ao quadrupolo.
+ Para retirar das equações de movimento uma resposta do condensado sujeito
+ a uma perturbação externa, faremos uma linearização dessas equações o que
+ é equivalente a calcularmos o espectro de Bogoliubov.
+ Para tanto, dizemos que o condensado está levemente deslocado de sua posição
+ de equilíbrio, ou seja, 
+\begin_inset Formula $r_{\rho}\left(t\right)\rightarrow\rho_{0}+\delta_{\rho}\left(t\right)$
+\end_inset
+
+, 
+\begin_inset Formula $r_{z}\left(t\right)\rightarrow z_{0}+\delta_{z}\left(t\right)$
+\end_inset
+
+ e 
+\begin_inset Formula $\alpha\left(t\right)\rightarrow\alpha_{0}+\delta_{\alpha}\left(t\right)$
+\end_inset
+
+.
+ Seguindo essas mudanças e negligenciando termos de segunda ordem temos:
+\begin_inset Formula 
+\begin{align}
+D_{1}\ddot{\delta_{\rho}}+G_{1}\rho_{0}\ddot{\delta_{\alpha}}+\left(D_{1}+\frac{3G_{4}}{\rho_{0}^{4}}+\frac{12D_{7}\gamma}{\rho_{0}^{4}z_{0}}\right)\delta_{\rho}+\nonumber \\
+\left(\frac{4D_{7}\gamma}{\rho_{0}^{3}z_{0}^{2}}\right)\delta_{z}+\left(D_{1}^{\prime}\rho_{0}-\frac{G_{4}^{\prime}}{\rho_{0}^{3}}-\frac{4D_{7}^{\prime}\gamma}{\rho_{0}^{3}z_{0}}\right)\delta_{\alpha} & =0\label{eq:3a}\\
+D_{2}\ddot{\delta_{z}}+G_{5}z_{0}\ddot{\delta_{\alpha}}+\left(\frac{4D_{7}\gamma}{\rho_{0}^{3}z_{0}^{2}}\right)\delta_{\rho}+\left(D_{2}\lambda^{2}+\frac{4D_{7}\gamma}{\rho_{0}^{2}z_{0}^{3}}\right)\delta_{z}+\nonumber \\
+\left(D_{2}^{\prime}\lambda^{2}z_{0}-\frac{2D_{7}^{\prime}\gamma}{\rho_{0}^{2}z_{0}^{2}}\right)\delta_{\alpha} & =0\label{eq:3b}\\
+D_{1}^{\prime}\rho_{0}\ddot{\delta_{\rho}}+D_{2}^{\prime}z_{0}\ddot{\delta_{z}}+\left(G_{8}\rho_{0}^{2}+G_{9}z_{0}^{2}\right)\ddot{\delta_{\alpha}}+\left(2D_{1}^{\prime}\rho_{0}-\frac{2G_{14}}{\rho_{0}^{3}}-\frac{8D_{7}^{\prime}\gamma}{\rho_{0}^{3}z_{0}}\right)\delta_{\rho}+\nonumber \\
+\left(2D_{4}^{\prime}\lambda^{2}z_{0}-\frac{4D_{7}^{\prime}\gamma}{\rho_{0}^{2}z_{0}^{2}}\right)\delta_{z}+\left(D_{1}^{\prime\prime}\rho_{0}^{2}+D_{2}^{\prime\prime}\lambda^{2}z_{0}^{2}+\frac{G_{14}^{\prime}}{\rho_{0}^{2}}+\frac{4D_{7}^{\prime\prime}\gamma}{\rho_{0}^{2}z_{0}}\right)\delta_{\alpha} & =0,\label{eq:3c}
+\end{align}
+
+\end_inset
+
+note que as funções de 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ são funções de 
+\begin_inset Formula $\alpha_{0}$
+\end_inset
+
+ como, anteriormente, no caso estacionário.
+ Os termos que não dependem dos 
+\begin_inset Formula $\delta_{i}$
+\end_inset
+
+ formam a solução estacionária sumindo das equações acima.
+ Com essas equações podemos escreve-las como matrizes,
+\begin_inset Formula 
+\begin{align}
+M\ddot{\delta}+V\delta & =0\\
+\begin{pmatrix}m_{11} & 0 & m_{13}\\
+0 & m_{22} & m_{23}\\
+m_{31} & m_{32} & m_{33}
+\end{pmatrix}\begin{pmatrix}\ddot{\delta_{\rho}}\\
+\ddot{\delta_{z}}\\
+\ddot{\delta_{\alpha}}
+\end{pmatrix}+\begin{pmatrix}v_{11} & v_{12} & v_{13}\\
+v_{21} & v_{22} & v_{23}\\
+v_{31} & v_{32} & v_{33}
+\end{pmatrix}\begin{pmatrix}\delta_{\rho}\\
+\delta_{z}\\
+\delta_{\alpha}
+\end{pmatrix} & =0,
+\end{align}
+
+\end_inset
+
+e calcularemos a relação de dispersão,
+\begin_inset Formula 
+\begin{equation}
+\det\left(M^{-1}V-\varpi^{2}I\right)=0,
+\end{equation}
+
+\end_inset
+
+o que resulta nas freqüências dos modos coletivos.
+ O resultado do determinante será uma equação cubica de 
+\begin_inset Formula $\varpi^{2}$
+\end_inset
+
+, isto é,
+\begin_inset Formula 
+\begin{equation}
+-\varpi^{6}+b\varpi^{4}-c\varpi^{2}+d=0,
+\end{equation}
+
+\end_inset
+
+cuja solução está no Apêndice C.
+ Agora os determinantes 
+\begin_inset Formula $\det M$
+\end_inset
+
+ e 
+\begin_inset Formula $\det V$
+\end_inset
+
+ são, ambos, positivos para 
+\begin_inset Formula $\ell=1$
+\end_inset
+
+.
+ O que significa que estamos no estado de menor energia para o caso de um
+ vórtice central num condensado de Bose-Einstein, portanto as freqüências
+ 
+\begin_inset Formula $\varpi^{2}$
+\end_inset
+
+ também serão positivas.
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+centering
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename modosXlambda.eps
+	scale 65
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset Formula $\ell=1$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig4a"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename modosXlambda2.eps
+	scale 65
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset Formula $\ell=2$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig4b"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Freqüência dos modos de oscilações de um condensado contendo um vórtice
+ central.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig4"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+ Segundo este resultado teremos três freqüências as quais não poderão ser
+ relacionadas a apenas um único modo de oscilação, ou seja, temos três freqüênci
+as e quatro modos de oscilação no total, sendo que apenas três modos podem
+ ser observados de acordo com a anisotropia do potencial harmônico como
+ é representado na Figura 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig4a"
+
+\end_inset
+
+.
+ Os quatro modos de oscilação serão dois tipos de monopolo (breathing) e
+ dois tipos de quadrupolo.
+ Os dois primeiros são quando o núcleo do vórtice está em fase com o raio
+ da direção 
+\begin_inset Formula $\rho$
+\end_inset
+
+ (B e Q da Figura 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig4a"
+
+\end_inset
+
+), e os dois últimos terão os núcleo do vórtice em fase com o raio axial.
+ Note que para um 
+\begin_inset Formula $\lambda\approx1.9$
+\end_inset
+
+ os modos de monopolo e quadrupolo são degenerados, assim como outros três
+ modos (Q, QV e BV) são degenerados em 
+\begin_inset Formula $\lambda\approx8.5$
+\end_inset
+
+.
+ Prestando uma atenção maior, para 
+\begin_inset Formula $\lambda<8.5$
+\end_inset
+
+ sempre os modos BV e QV estarão degenerados, acima deste valor Q e QV que
+ se tornam degenerados.
+\end_layout
+
+\begin_layout Standard
+Extrapolando esses cálculos para uma situação ideal onde 
+\begin_inset Formula $\gamma=0$
+\end_inset
+
+, pode observar que o resultado se inverte.
+ O modo quadrupolar Q se torna menos energético que o modo de monopolo B
+ quando a simetria do condensado é prolato.
+ Quando este mesmo é esférico, o modo menos energético só tem uma oscilação
+ na direção axial, e os modos subseqüentes, em escala energética, são: Q,
+ e BV.
+ Já numa simetria oblato há dois modos de oscilação (os menos energéticos)
+ que apresentam uma ausência de oscilação em 
+\begin_inset Formula $\hat{z}$
+\end_inset
+
+, sendo o menos energético deles uma espécie de quadrupolo.
+ Nessa simetria o modo quadrupolar QV é o mais energético.
+ Este resultado anômalo é conseqüência de negligenciarmos uma parte da energia
+ cinética.
+ 
+\end_layout
+
+\begin_layout Standard
+Este modelo também pode ser usado para verificar a estabilidade de vórtices
+ multi-carregados.
+ E assim calculamos as freqüências quando a carga é 
+\begin_inset Formula $\ell=2$
+\end_inset
+
+, sendo o condensado estável para 
+\begin_inset Formula $\gamma=800$
+\end_inset
+
+.
+ Na figura 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig4b"
+
+\end_inset
+
+ mostra que o aumento da vorticidade culmina numa alteração das regiões
+ do QV e BV, além de diminuir uma das freqüências em comparação à figura
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig4a"
+
+\end_inset
+
+.
+ Com o intuito de verificar o efeito de grandes vórtices, calculamos o efeito
+ nas freqüências quando 
+\begin_inset Formula $\ell=20$
+\end_inset
+
+.
+ No caso esférico este é instável, sendo estável e sem grandes modificações
+ com a figura 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig4"
+
+\end_inset
+
+ quando oblato.
+ No entanto, resultando nos mesmos valores de freqüências do caso sem interação
+ atômica 
+\begin_inset Formula $\gamma=0$
+\end_inset
+
+.
+ Sendo a freqüência do quadrupolo Q uma ordem de grandeza menor que as outras
+ duas.
+\end_layout
+
+\begin_layout Section
+Modulando o Comprimento de Espalhamento
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+indent}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+O mecanismo de excitação dos modos coletivos descritos na seção anterior
+ é via uma modulação no comprimento de espalhamento, isto é,
+\begin_inset Formula 
+\begin{equation}
+a_{s}(t)=a_{0}+\delta a\cos\left(\Omega t\right),
+\end{equation}
+
+\end_inset
+
+o que é equivalente à fazermos 
+\begin_inset Formula $\gamma\rightarrow\gamma(t)$
+\end_inset
+
+ com a mesma cara de 
+\begin_inset Formula $a_{s}(t)$
+\end_inset
+
+, ou seja,
+\begin_inset Formula 
+\begin{equation}
+\gamma(t)=\gamma_{0}+\delta\gamma\cos\left(\Omega t\right).
+\end{equation}
+
+\end_inset
+
+Onde 
+\begin_inset Formula $\gamma_{0}$
+\end_inset
+
+ é o nosso parâmetro de interação médio, 
+\begin_inset Formula $\delta\gamma$
+\end_inset
+
+ uma amplitude de modulação e 
+\begin_inset Formula $\Omega$
+\end_inset
+
+ a freqüência com a qual excitamos os modos.
+\end_layout
+
+\begin_layout Standard
+Na Figura 5 foi excitado, através das equações não-lineares, o modo degenerado
+ para um condensado com anisotropia 
+\begin_inset Formula $\lambda=0.1$
+\end_inset
+
+.
+ Pode ser visto que sua oscilação é similar à um batimento de ondas, pois
+ temos os três modos de oscilação simultaneamente, isto é, nosso batimento
+ está contido a freqüência do batimento mais a freqüência predominante (a
+ freqüência próxima da ressonância) e as outras duas freqüências, como também,
+ seus harmônicos.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+centering
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename l01g800d24o61-r.eps
+	scale 53
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename l01g800d24o61-z.eps
+	scale 53
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename l01g800d24o61-a.eps
+	scale 53
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Excitação coletiva para 
+\begin_inset Formula $\gamma_{0}=800$
+\end_inset
+
+, 
+\begin_inset Formula $\delta\gamma=24$
+\end_inset
+
+, 
+\begin_inset Formula $\lambda=0.1$
+\end_inset
+
+ e 
+\begin_inset Formula $\Omega=6.1$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig5"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Expansão Livre
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+indent}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename nume01.eps
+	scale 65
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename nume1.eps
+	scale 65
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Ambos gráficos mostram a expansão do aspect ratio do condensado com vórtice
+ (
+\begin_inset Formula $\ell=1$
+\end_inset
+
+), inicialmente armadilhado num potencial com anisotropia igual à 
+\begin_inset Formula $\lambda=0.1$
+\end_inset
+
+ (esquerda) e 
+\begin_inset Formula $\lambda=1$
+\end_inset
+
+ (direita).
+ Calculamos para uma interação de 
+\begin_inset Formula $\gamma=800$
+\end_inset
+
+, o que corresponde ao valor aproximado no caso de um condensado como experiment
+o BEC-I.
+ A linha pontilhada representa os dados da simulação numérica, e a linha
+ continua é resultado do método variacional.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig6"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+centering
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename vel-r.eps
+	scale 65
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset Formula $\ell=1$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig6a"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename vel-r2.eps
+	scale 65
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset Formula $\ell=2$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig6b"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Este gráfico mostra a expansão livre de 
+\begin_inset Formula $\alpha(t)=\xi(t)/R_{\rho}(t)$
+\end_inset
+
+, sendo a linha preta referente à uma anisotropia tipo prolato (
+\begin_inset Formula $\lambda=0.1$
+\end_inset
+
+), a azul o caso isotrópico (
+\begin_inset Formula $\lambda=1$
+\end_inset
+
+) e a amarela para um condensado tipo oblato (
+\begin_inset Formula $\lambda=8$
+\end_inset
+
+).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig7"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+O interesse na expansão livre vem do fato de só podermos fazer medidas dos
+ condensados após desligado o potencial de aprisionamento.
+ Para este fim, como mencionado anteriormente, basta usamos as equações
+ de movimento 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:2d"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:2e"
+
+\end_inset
+
+ e 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:2f"
+
+\end_inset
+
+ sem os termos vindos do potencial harmônico, isto é,
+\begin_inset Formula 
+\begin{align}
+D_{1}\ddot{r_{\rho}}+G_{1}r_{\rho}\ddot{\alpha}+G_{2}r_{\rho}\dot{\alpha}^{2}+G_{3}\dot{r_{\rho}}\dot{\alpha}-\frac{G_{4}}{r_{\rho}^{3}}-\frac{4D_{7}\gamma}{r_{\rho}^{3}r_{z}} & =0\\
+D_{2}\ddot{r_{z}}+G_{5}r_{z}\ddot{\alpha}+G_{6}r_{z}\dot{\alpha}^{2}+G_{7}\dot{r_{z}}\dot{\alpha}-\frac{2D_{7}\gamma}{r_{\rho}^{2}r_{z}^{2}} & =0\\
+D_{1}^{\prime}r_{\rho}\ddot{r_{\rho}}+D_{2}^{\prime}r_{z}\ddot{r_{z}}+\left(G_{8}r_{\rho}^{2}+G_{9}r_{z}^{2}\right)\ddot{\alpha}+\left(G_{10}r_{\rho}^{2}+G_{11}r_{z}^{2}\right)\dot{\alpha}^{2}\nonumber \\
++\left(G_{12}r_{\rho}\dot{r_{\rho}}+G_{13}r_{z}\dot{r_{z}}\right)\dot{\alpha}+\frac{G_{14}}{r_{\rho}^{3}}+\frac{4D_{7}^{\prime}\gamma}{r_{\rho}^{2}r_{z}} & =0,
+\end{align}
+
+\end_inset
+
+cujas condições iniciais são dadas pela solução estacionária.
+ Esse resultado concorda com a simulação numérica como pode ser vista na
+ Figura 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig6"
+
+\end_inset
+
+, e expansão do núcleo do vórtice é dado na Figura 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig7"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Conclusão
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+indent}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Nesse trabalho propusemos uma alteração na fase usada no método variacional
+ para corrigir as freqüências negativas dos modos coletivos quando temos
+ um parâmetro que descreve a dinâmica do núcleo do vórtice.
+ Essa alteração foi para que tivéssemos uma flutuação adequada da densidade
+ atômica.
+\end_layout
+
+\begin_layout Standard
+Concluímos, com base na equação de continuidade, que devemos ter um parâmetro
+ variacional na fase, respectivamente, para cada parâmetro na densidade.
+ Com isso ao calcular as freqüências para o vórtice com carga 
+\begin_inset Formula $\ell=1$
+\end_inset
+
+, estas mesmas deram positivas.
+ Dessa maneira foi observado que o vórtice abre uma degenerescência nos
+ modos coletivos, a qual depende da anisotropia da armadilha e do parâmetro
+ de interação atômica.
+ Esta degenerescência está vinculada à oscilação do núcleo do vórtice, o
+ qual precisa de muita energia para defasar sua oscilação com relação à
+ componente radial da nuvem atômica.
+\end_layout
+
+\begin_layout Standard
+Quando a carga do vórtice é 
+\begin_inset Formula $\ell\geq2$
+\end_inset
+
+ pode aparecer freqüências negativas, pois o sistema não está mais no seu
+ mínimo de energia.
+ Em decorrência disso, podemos estudar a instabilidade de vórtices multi-carrega
+dos.
+ Observando a região de estabilidade de vórtices com carga maior que 
+\begin_inset Formula $\ell=1$
+\end_inset
+
+, suas freqüências são praticamente as mesma conforme temos maiores cargas.
+ No limite de vórtices gigantes o movimento das componentes, radial e axial,
+ acabem por depender apenas das oscilação do núcleo do vórtice.
+\end_layout
+
+\begin_layout Standard
+Também fizemos a expansão livre deste sistema, podendo avaliar o núcleo
+ do vórtice para 
+\begin_inset Formula $\ell>2$
+\end_inset
+
+, diferentemente ao trabalho anterior que só nos permitia calcular a expansão
+ deste raio em 
+\begin_inset Formula $\ell=1$
+\end_inset
+
+.
+ Por esse Ansatz mantemos a relação logarítmica para a energia do vórtice.
+\end_layout
+
+\begin_layout Section
+\start_of_appendix
+Duas Aproximações de perfil de Thomas-Fermi contendo um Vórtice
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+indent}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Duas aproximações para o perfil de densidade podem ser obtidas da EGP para
+ um vórtice central.
+ Primeiramente, vamos escrever a EGP independente do tempo em coordenadas
+ cilíndricas,
+\begin_inset Formula 
+\begin{equation}
+\mu\psi\left(\rho,z\right)=-\frac{\hbar^{2}}{2m}\nabla_{\rho,z}^{2}\psi\left(\rho,z\right)+\frac{\hbar^{2}\ell^{2}}{2m\rho^{2}}\psi\left(\rho,z\right)+V\left(\rho,z\right)\psi\left(\rho,z\right)+g\left|\psi\left(\rho,z\right)\right|^{2}\psi\left(\rho,z\right),
+\end{equation}
+
+\end_inset
+
+onde 
+\begin_inset Formula $\nabla_{\rho,z}^{2}$
+\end_inset
+
+ é o Laplaciano com respeito às coordenadas 
+\begin_inset Formula $\rho$
+\end_inset
+
+ e 
+\begin_inset Formula $z$
+\end_inset
+
+.
+ Tomemos então o potencial efetivo muito maior que a energia cinética, numa
+ armadilha harmônica e anisotrópica,
+\begin_inset Formula 
+\begin{equation}
+\mu=\frac{\hbar^{2}\ell^{2}}{2m\rho^{2}}+\frac{1}{2}m\omega_{\rho}^{2}\left(\rho^{2}+\lambda^{2}z^{2}\right)+gn\left(\rho,z\right),\label{eq:A1}
+\end{equation}
+
+\end_inset
+
+sendo 
+\begin_inset Formula $n\left(\rho,z\right)=\left|\psi\left(\rho,z\right)\right|^{2}$
+\end_inset
+
+.
+ Agora podemos fazer de duas maneiras diferentes, a primeira e mais usual
+ será apenas isolar 
+\begin_inset Formula $n\left(\rho,z\right)$
+\end_inset
+
+, ficando
+\begin_inset Formula 
+\begin{equation}
+n\left(\rho,z\right)=\frac{\mu}{g}\left(1-\frac{\xi^{2}}{\rho^{2}}-\frac{\rho^{2}}{R_{\rho}^{2}}-\frac{z^{2}}{R_{z}^{2}}\right)\Theta\left(1-\frac{\xi^{2}}{\rho^{2}}-\frac{\rho^{2}}{R_{\rho}^{2}}-\frac{z^{2}}{R_{z}^{2}}\right),
+\end{equation}
+
+\end_inset
+
+com 
+\begin_inset Formula $\Theta$
+\end_inset
+
+ sendo a função passo e os raios de TF são:
+\begin_inset Formula 
+\begin{equation}
+R_{\rho}=\sqrt{\frac{2\mu}{m\omega_{\rho}^{2}}}\text{, }R_{z}=\sqrt{\frac{2\mu}{m\lambda^{2}\omega_{\rho}^{2}}}\text{ e }\xi=\sqrt{\frac{\hbar^{2}\ell^{2}}{2m\mu}}.
+\end{equation}
+
+\end_inset
+
+E a função de onde é dada com uma fase em 
+\begin_inset Formula $\varphi$
+\end_inset
+
+,
+\begin_inset Formula 
+\begin{equation}
+\psi\left(\rho,\varphi,z\right)=e^{i\ell\varphi}\left(\frac{\mu}{g}\right)^{\frac{1}{2}}\sqrt{1-\frac{\xi^{2}}{\rho^{2}}-\frac{\rho^{2}}{R_{\rho}^{2}}-\frac{z^{2}}{R_{z}^{2}}},
+\end{equation}
+
+\end_inset
+
+na região em que 
+\begin_inset Formula $1-\frac{\xi^{2}}{\rho2}-\frac{\rho^{2}}{R_{\rho}^{2}}-\frac{z^{2}}{R_{z}^{2}}\geq0$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+A segunda aproximação é similar à essa, contudo, ela é razoavelmente mais
+ simples para se trabalhar quando estamos tratando de um condensado em três
+ dimensões.
+ Em 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:A1"
+
+\end_inset
+
+ usamos a relação para o comprimento de coerência,
+\begin_inset Formula 
+\begin{equation}
+\frac{\hbar^{2}\ell^{2}}{2m\xi^{2}}=gn\left(\rho,z\right),
+\end{equation}
+
+\end_inset
+
+tornando-a da seguinte forma:
+\begin_inset Formula 
+\begin{equation}
+\mu=\frac{1}{2}m\omega_{\rho}^{2}\left(\rho^{2}+\lambda^{2}z^{2}\right)+\left(\frac{\xi^{2}}{\rho^{2}}+1\right)gn\left(\rho,z\right).
+\end{equation}
+
+\end_inset
+
+Agora isolemos a densidade 
+\begin_inset Formula $n\left(\rho,z\right)$
+\end_inset
+
+, então temos
+\begin_inset Formula 
+\begin{equation}
+n\left(\rho,z\right)=\frac{\mu}{g}\left(\frac{\rho^{2}}{\rho^{2}+\xi^{2}}\right)\left(1-\frac{\rho^{2}}{R_{\rho}^{2}}-\frac{z^{2}}{R_{z}^{2}}\right)\Theta\left(1-\frac{\rho^{2}}{R_{\rho}^{2}}-\frac{z^{2}}{R_{z}^{2}}\right),
+\end{equation}
+
+\end_inset
+
+onde os raios são dados como da forma acima, exceto pelo raio do vórtice
+ que não dependerá de 
+\begin_inset Formula $\mu$
+\end_inset
+
+.
+ Nessa descrição o raio do vórtice está associado ao parâmetro de interação
+ 
+\begin_inset Formula $g$
+\end_inset
+
+, ou seja, este pode variar de acordo com a razão de 
+\begin_inset Formula $\mu/g$
+\end_inset
+
+.
+ A mesma fase tem de ser acrescentada quando vamos usar a função de onda.
+ A segunda vantagem dessa segunda forma de escrever um perfil de densidade
+ TF está no fato de podermos separar a densidade de vórtice da densidade
+ de background.
+ Chamaremos de 
+\begin_inset Formula 
+\begin{equation}
+n_{TF}\left(\rho,z\right)=\frac{\mu}{g}\left(1-\frac{\rho^{2}}{R_{\rho}^{2}}-\frac{z^{2}}{R_{z}^{2}}\right)\Theta\left(1-\frac{\rho^{2}}{R_{\rho}^{2}}-\frac{z^{2}}{R_{z}^{2}}\right)
+\end{equation}
+
+\end_inset
+
+e agora faremos
+\begin_inset Formula 
+\begin{align}
+n\left(\rho,z\right)= & \left(\frac{\rho^{2}}{\rho^{2}+\xi^{2}}\right)n_{TF}\left(\rho,z\right)\nonumber \\
+= & \left(1-\frac{\xi^{2}}{\rho^{2}+\xi^{2}}\right)n_{TF}\left(\rho,z\right)\nonumber \\
+= & n_{bg}\left(\rho,z\right)+n_{v}\left(\rho,z\right),
+\end{align}
+
+\end_inset
+
+onde 
+\begin_inset Formula $n_{bg}\left(\rho,z\right)=n_{TF}\left(\rho,z\right)$
+\end_inset
+
+ e 
+\begin_inset Formula 
+\begin{equation}
+n_{v}\left(\rho,z\right)=\left(-\frac{\xi^{2}}{\rho^{2}+\xi^{2}}\right)n_{TF}\left(\rho,z\right).
+\end{equation}
+
+\end_inset
+
+A diferença entre as energias calculadas com ambas aproximações é menor
+ que 1%.
+\end_layout
+
+\begin_layout Section
+Calculo das Funções 
+\begin_inset Formula $A_{i}(\alpha)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+indent}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As funções 
+\begin_inset Formula $A_{i}$
+\end_inset
+
+ são resultados das integrais de TF, sendo cada uma referente a uma parte
+ da Lagrangiana, exceto o 
+\begin_inset Formula $A_{0}$
+\end_inset
+
+ que vem da condição de normalização.
+ Começando por este, que estará mais detalhado, pois o procedimento será
+ o mesmo.
+ Fazendo 
+\begin_inset Formula $\rho\rightarrow\rho R_{\rho}$
+\end_inset
+
+ e 
+\begin_inset Formula $z\rightarrow zR_{z}$
+\end_inset
+
+, a integral de normalização será
+\begin_inset Formula 
+\begin{equation}
+A_{0}(\alpha)=2\pi\int\int\left(\frac{\rho^{2}}{\rho^{2}+\alpha^{2}}\right)\left(1-\rho^{2}-z^{2}\right)\rho d\rho dz.
+\end{equation}
+
+\end_inset
+
+Agora faremos uma mudança de variáveis, indo de coordenadas cilíndricas
+ para coordenadas esféricas, isto é, 
+\begin_inset Formula $\rho=r\sin\theta$
+\end_inset
+
+ e 
+\begin_inset Formula $z=r\cos\theta$
+\end_inset
+
+.
+ Dessa maneira os limites de interação são simplificados.
+\begin_inset Formula 
+\begin{align}
+A_{0}(\alpha)= & 2\pi\int_{0}^{\pi}\int_{0}^{1}\left(\frac{r^{2}\sin^{2}\theta}{r^{2}\sin^{2}\theta+\alpha^{2}}\right)\left(1-r^{2}\right)r^{2}\sin\theta drd\theta\nonumber \\
+= & \frac{8}{45}\left[3+20\alpha^{2}+15\alpha^{4}-15\alpha^{2}\left(1+\alpha^{2}\right)^{\frac{3}{2}}\text{acoth}\left(\sqrt{1+\alpha^{2}}\right)\right].
+\end{align}
+
+\end_inset
+
+Notemos a seguinte relação: 
+\begin_inset Formula 
+\begin{equation}
+\text{acoth}\left(\sqrt{1+\alpha^{2}}\right)=-\frac{1}{4}\log\left[\frac{\left(1-\sqrt{1+\alpha^{2}}\right)^{2}}{\left(1+\sqrt{1+\alpha^{2}}\right)^{2}}\right],
+\end{equation}
+
+\end_inset
+
+cuja utilidade é fixar 
+\begin_inset Formula $\alpha\in\text{Reais}$
+\end_inset
+
+, impedindo que 
+\begin_inset Formula $A_{i}$
+\end_inset
+
+ seja imaginário.
+ Prosseguindo, os próximos 
+\begin_inset Formula $A_{i}$
+\end_inset
+
+ serão:
+\begin_inset Formula 
+\begin{align}
+A_{1}\left(\alpha\right)= & 2\pi\int_{0}^{\pi}\int_{0}^{1}\left(\frac{r^{4}\sin^{4}\theta}{r^{2}\sin^{2}\theta+\alpha^{2}}\right)\left(1-r^{2}\right)r^{2}\sin\theta drd\theta\nonumber \\
+= & \frac{8}{315}\left[6-7\alpha^{2}\left(3+20\alpha^{2}+15\alpha^{4}\right)+105\alpha^{4}\left(1+\alpha^{2}\right)^{\frac{3}{2}}\text{acoth}\left(\sqrt{1+\alpha^{2}}\right)\right]\\
+A_{2}\left(\alpha\right)= & 2\pi\int_{0}^{\pi}\int_{0}^{1}\left(\frac{r^{4}\sin^{2}\theta\cos^{2}\theta}{r^{2}\sin^{2}\theta+\alpha^{2}}\right)\left(1-r^{2}\right)r^{2}\sin\theta drd\theta\nonumber \\
+= & \frac{8}{1575}\left[15+7\alpha^{2}\left(23+35\alpha^{2}+15\alpha^{4}\right)-105\alpha^{2}\left(1+\alpha^{2}\right)^{\frac{3}{2}}\text{acoth}\left(\sqrt{1+\alpha^{2}}\right)\right]\\
+A_{3}\left(\alpha\right)= & 2\pi\int_{0}^{\pi}\int_{0}^{1}\left(\frac{r^{6}\sin^{6}\theta}{r^{2}\sin^{2}\theta+\alpha^{2}}\right)\left(1-r^{2}\right)r^{2}\sin\theta drd\theta\nonumber \\
+= & \frac{8}{945}\left[8-18\alpha^{2}+63\alpha^{4}+420\alpha^{6}+315\alpha^{8}-315\alpha^{6}\left(1+\alpha^{2}\right)^{\frac{3}{2}}\text{acoth}\left(\sqrt{1+\alpha^{2}}\right)\right]\\
+A_{4}\left(\alpha\right)= & 2\pi\int_{0}^{\pi}\int_{0}^{1}\left(\frac{1}{r^{2}\sin^{2}\theta+\alpha^{2}}\right)\left(1-r^{2}\right)r^{2}\sin\theta drd\theta\nonumber \\
+= & -\frac{8}{9}\left[4+3\alpha^{2}-3\left(1+\alpha^{2}\right)^{\frac{3}{2}}\text{acoth}\left(\sqrt{1+\alpha^{2}}\right)\right]\\
+A_{5}\left(\alpha\right)= & 2\pi\int_{0}^{\pi}\int_{0}^{1}\left(\frac{1}{r^{2}\sin^{2}\theta+\alpha^{2}}\right)\left(1-r^{2}\right)r^{2}\sin\theta drd\theta\\
+= & \frac{3}{2}-\alpha^{2}+\alpha^{4}\left(1+\alpha^{2}\right)^{-\frac{1}{2}}\text{acoth}\left(\sqrt{1+\alpha^{2}}\right)\\
+A_{6}\left(\alpha\right)= & 2\pi\int_{0}^{\pi}\int_{0}^{1}\left(\frac{r^{8}\sin^{8}\theta}{r^{2}\sin^{2}\theta+\alpha^{2}}\right)\left(1-r^{2}\right)r^{2}\sin\theta drd\theta\nonumber \\
+= & \frac{8}{10395}\left[48-11\alpha^{2}\left(8-18\alpha^{2}+63\alpha^{4}+420\alpha^{6}+315\alpha^{8}\right)+3465\alpha^{8}\left(1+\alpha^{2}\right)^{\frac{3}{2}}\text{acoth}\left(\sqrt{1+\alpha^{2}}\right)\right]\\
+A_{7}\left(\alpha\right)= & 2\pi\int_{0}^{\pi}\int_{0}^{1}\left(\frac{r^{2}\sin^{2}\theta}{r^{2}\sin^{2}\theta+\alpha^{2}}\right)^{2}\left(1-r^{2}\right)^{2}r^{2}\sin\theta drd\theta\nonumber \\
+= & \frac{16}{1575}\left[30+749\alpha^{2}+1680\alpha^{4}+945\alpha^{6}-105\alpha^{2}\left(4+9\alpha^{2}\right)\left(1+\alpha^{2}\right)^{\frac{3}{2}}\text{acoth}\left(\sqrt{1+\alpha^{2}}\right)\right].
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Solução da Equação Cúbica
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+indent}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A forma canônica da equação cúbica é
+\begin_inset Formula 
+\begin{equation}
+ax^{3}+bx^{2}+cx+d=0\label{eq:c2}
+\end{equation}
+
+\end_inset
+
+com 
+\begin_inset Formula $a\neq0$
+\end_inset
+
+.
+ Como solução usual faremos uma transformação no 
+\begin_inset Formula $x$
+\end_inset
+
+, 
+\begin_inset Formula $x\rightarrow t+h$
+\end_inset
+
+.
+\begin_inset Formula 
+\begin{align}
+a\left(t+h\right)^{3}+b\left(t+h\right)^{2}+c\left(t+h\right)+d & =0\\
+a\left(t^{3}+3ht^{2}+3h^{2}t+h^{3}\right)+b\left(t^{2}+2ht+h^{2}\right)+c\left(t+h\right)+d & =0\\
+at^{3}+\left(3ah+b\right)t^{2}+\left(3ah^{2}+2bh+c\right)t+d+ah^{3}+bh^{2}+ch & =0\\
+t^{3}+\left(3h+\frac{b}{a}\right)t^{2}+\left(3h^{2}+2h\frac{b}{a}+\frac{c}{a}\right)t+\frac{d}{a}+h^{3}+\frac{b}{a}h^{2}+\frac{c}{a}h & =0
+\end{align}
+
+\end_inset
+
+Escolhendo 
+\begin_inset Formula $h=-\frac{b}{3a}$
+\end_inset
+
+, reduzimos o grau da equação acima.
+\begin_inset Formula 
+\begin{align}
+t^{3}+pt+q & =0,\label{eq:c1}
+\end{align}
+
+\end_inset
+
+ onde
+\begin_inset Formula 
+\begin{equation}
+q=\frac{2b^{3}}{27a^{3}}-\frac{bc}{3a^{2}}+\frac{d}{a}
+\end{equation}
+
+\end_inset
+
+e
+\begin_inset Formula 
+\begin{equation}
+p=\frac{c}{a}-\frac{b^{2}}{3a^{2}}.
+\end{equation}
+
+\end_inset
+
+Se exprimimos 
+\begin_inset Formula $t=u+v$
+\end_inset
+
+, a equação 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:c1"
+
+\end_inset
+
+ transformar-se-á em 
+\begin_inset Formula 
+\begin{align}
+u^{3}+v^{3}+q+\left(3uv+p\right)\left(u+v\right) & =0,
+\end{align}
+
+\end_inset
+
+cuja solução é dada em termos de um sistema de 
+\begin_inset Formula $u$
+\end_inset
+
+ e 
+\begin_inset Formula $v$
+\end_inset
+
+
+\begin_inset Formula 
+\begin{equation}
+\begin{cases}
+u^{3}+v^{3} & =-q\\
+u^{3}v^{3} & =-\frac{p^{3}}{27}
+\end{cases}
+\end{equation}
+
+\end_inset
+
+então conduzimos o sistema para uma solução da qual sabemos a soma de dois
+ números 
+\begin_inset Formula $S=u^{3}+v^{3}=-q$
+\end_inset
+
+ e o produto dos mesmos 
+\begin_inset Formula $P=u^{3}v^{3}=-\frac{p^{3}}{27}$
+\end_inset
+
+, ou seja, uma equação quadrática
+\begin_inset Formula 
+\begin{equation}
+Y^{2}-SY+P=0.
+\end{equation}
+
+\end_inset
+
+Podemos escrever sem perda de generalidade,
+\begin_inset Formula 
+\begin{align}
+u^{3}=Y_{+}= & \frac{q}{2}+\frac{1}{2}\sqrt{q^{2}+\frac{4p^{3}}{27}}\\
+v^{3}=Y_{-}= & \frac{q}{2}-\frac{1}{2}\sqrt{q^{2}+\frac{4p^{3}}{27}}.
+\end{align}
+
+\end_inset
+
+Assim já temos a primeira solução
+\begin_inset Formula 
+\begin{equation}
+t_{1}=\left(\frac{q}{2}+\frac{1}{2}\sqrt{q^{2}+\frac{4p^{3}}{27}}\right)^{\frac{1}{3}}+\left(\frac{q}{2}-\frac{1}{2}\sqrt{q^{2}+\frac{4p^{3}}{27}}\right)^{\frac{1}{3}}.
+\end{equation}
+
+\end_inset
+
+Conhecida a solução 
+\begin_inset Formula $t_{1}$
+\end_inset
+
+ podemos obter as outras duas decompondo 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:c1"
+
+\end_inset
+
+ como o produto de todas soluções, isto é,
+\begin_inset Formula 
+\begin{align}
+\left(t-t_{1}\right)\left(t-t_{2}\right)\left(t-t_{3}\right)= & t^{3}+pt+q.\\
+t^{3}-\left(t_{1}+t_{2}+t_{3}\right)t^{2}+\left(t_{1}t_{2}+t_{2}t_{3}+t_{3}t_{1}\right)t-t_{1}t_{2}t_{3}= & t^{3}+pt+q
+\end{align}
+
+\end_inset
+
+Os dois polinômios são equivalentes de tiverem coeficientes homólogos iguais:
+\begin_inset Formula 
+\begin{equation}
+\begin{cases}
+t_{2}+t_{3} & =-t_{1}\\
+t_{2}t_{3} & =-\frac{q}{t_{1}}
+\end{cases}
+\end{equation}
+
+\end_inset
+
+da mesma maneira que foi feito anteriormente, temos uma soma e um produto
+ de dois números o que é equivalente a uma equação do segundo grau,
+\begin_inset Formula 
+\begin{equation}
+Z^{2}+t_{1}Z-\frac{q}{t_{1}}=0.
+\end{equation}
+
+\end_inset
+
+Assim a solução que faltava é
+\begin_inset Formula 
+\begin{align}
+t_{1}=Z_{+}= & -\frac{t_{1}}{2}+\sqrt{\frac{t_{1}}{4}+\frac{q}{t_{1}}}\\
+t_{2}=Z_{-}= & -\frac{t_{1}}{2}-\sqrt{\frac{t_{1}}{4}+\frac{q}{t_{1}}}.
+\end{align}
+
+\end_inset
+
+Portanto, as três soluções da equação cúbica 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:c2"
+
+\end_inset
+
+, no caso de discriminante 
+\begin_inset Formula $p>0$
+\end_inset
+
+, são
+\begin_inset Formula 
+\begin{equation}
+x_{i}=t_{i}-\frac{b}{3a}
+\end{equation}
+
+\end_inset
+
+para 
+\begin_inset Formula $i=1,2,3$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+No caso de discriminante negativo 
+\begin_inset Formula $p<0$
+\end_inset
+
+ convertemos os complexos conjugados 
+\begin_inset Formula $Y_{+}$
+\end_inset
+
+ e 
+\begin_inset Formula $Y_{-}$
+\end_inset
+
+ à sua forma trigonométrica
+\begin_inset Formula 
+\begin{align}
+Y_{+}= & \left|Y_{+}\right|\cos\theta+i\sin\theta\\
+Y_{-}= & \left|Y_{-}\right|\cos\theta-i\sin\theta.
+\end{align}
+
+\end_inset
+
+O que no fim das contas resultará na seguinte solução:
+\begin_inset Formula 
+\begin{align}
+x_{1}= & 2\sqrt{-\frac{p}{3}}\cos\left[\frac{1}{3}\arccos\left(-\frac{q}{2}\sqrt{-\frac{27}{p^{3}}}\right)\right]-\frac{b}{3a}\\
+x_{2}= & 2\sqrt{-\frac{p}{3}}\cos\left[\frac{1}{3}\arccos\left(-\frac{q}{2}\sqrt{-\frac{27}{p^{3}}}\right)+\frac{2\pi}{3}\right]-\frac{b}{3a}\\
+x_{3}= & 2\sqrt{-\frac{p}{3}}\cos\left[\frac{1}{3}\arccos\left(-\frac{q}{2}\sqrt{-\frac{27}{p^{3}}}\right)+\frac{4\pi}{3}\right]-\frac{b}{3a}.
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Cross-Check
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+indent}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Para verificarmos, em partes, se estamos indo pelo caminho certo, precisamos
+ fazer um cross-check.
+ No caso, isso seria validar as equações quando 
+\begin_inset Formula $\ell=0$
+\end_inset
+
+ e 
+\begin_inset Formula $\alpha\rightarrow0$
+\end_inset
+
+, assim as equações de movimento 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:2d"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:2e"
+
+\end_inset
+
+ e 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:2f"
+
+\end_inset
+
+ se tornarão
+\begin_inset Formula 
+\begin{align}
+\ddot{r_{\rho}}+r_{\rho} & =\lim_{\alpha\rightarrow0}\frac{4D_{6}(\alpha)\gamma}{D_{1}(\alpha)r_{\rho}^{3}r_{z}}\\
+\ddot{r_{z}}+\lambda^{2}r_{z} & =\lim_{\alpha\rightarrow0}\frac{2D_{6}(\alpha)\gamma}{D_{2}(\alpha)r_{\rho}^{2}r_{z}^{2}},
+\end{align}
+
+\end_inset
+
+ou seja,
+\begin_inset Formula 
+\begin{align}
+\ddot{r_{\rho}}+r_{\rho} & =\frac{15\gamma}{r_{\rho}^{3}r_{z}}\\
+\ddot{r_{z}}+\lambda^{2}r_{z} & =\frac{15\gamma}{r_{\rho}^{2}r_{z}^{2}}.
+\end{align}
+
+\end_inset
+
+É fácil de perceber que 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:ss1"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:ss2"
+
+\end_inset
+
+ e 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:ss3"
+
+\end_inset
+
+ são reduzidas à
+\begin_inset Formula 
+\begin{align}
+\rho_{0} & =\frac{15\gamma}{\rho_{0}^{3}z_{0}}\\
+\lambda^{2}z_{0} & =\frac{15\gamma}{\rho_{0}^{2}z_{0}^{2}},
+\end{align}
+
+\end_inset
+
+já que 
+\begin_inset Formula $\lim_{\alpha\rightarrow0}G_{4}=0$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "refdoc"
+options "abnt-num"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
