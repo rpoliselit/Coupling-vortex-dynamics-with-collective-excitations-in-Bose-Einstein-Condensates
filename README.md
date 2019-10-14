@@ -1,6 +1,6 @@
 # Coupling-vortex-dynamics-with-collective-excitations-in-Bose-Einstein-Condensates
 
-!main results(show.png)
+![main results](show.png)
 
 Repository of the following research:
 
